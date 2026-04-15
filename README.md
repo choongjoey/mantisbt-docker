@@ -1,9 +1,11 @@
 
-[![CI](https://github.com/okainov/mantisbt-docker/workflows/CI/badge.svg?branch=master)](https://github.com/okainov/mantisbt-docker/actions) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/okainov/mantisbt)](https://hub.docker.com/r/okainov/mantisbt) [![Docker Pulls](https://img.shields.io/docker/pulls/okainov/mantisbt)](https://hub.docker.com/r/okainov/mantisbt)
+[![CI](https://github.com/choongjoey/mantisbt-docker/workflows/CI/badge.svg?branch=master)](https://github.com/choongjoey/mantisbt-docker/actions) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/choongjoey/mantisbt)](https://hub.docker.com/r/choongjoey/mantisbt) [![Docker Pulls](https://img.shields.io/docker/pulls/choongjoey/mantisbt)](https://hub.docker.com/r/choongjoey/mantisbt)
 
 # MantisBT bug tracker Docker image
 
 Docker image for Mantis Bug Tracker https://www.mantisbt.org/
+
+> **Fork notice:** This is a fork of [okainov/mantisbt-docker](https://github.com/okainov/mantisbt-docker) with added PostgreSQL support.
 
 # Why this image?
 
@@ -23,7 +25,7 @@ The reason is to combine all the useful features they have and add some missing 
 
 # Quick start
 
-- Download `docker-compose.yml` from this repo: `wget https://raw.githubusercontent.com/okainov/mantisbt-docker/master/docker-compose.yaml`
+- Download `docker-compose.yml` from this repo: `wget https://raw.githubusercontent.com/choongjoey/mantisbt-docker/master/docker-compose.yaml`
 - Check the environment variables (at least you need to set MASTER_SALT env variable, [doc](
 https://www.mantisbt.org/docs/master/en-US/Admin_Guide/html-desktop/#admin.config.security))
 - `docker-compose up -d`
@@ -43,7 +45,7 @@ version: "3"
 services:
   web:
     # Pin the version for production usage!
-    image: okainov/mantisbt:latest
+    image: choongjoey/mantisbt:latest
     container_name: mantis_web
     ports:
       - "8989:80"
