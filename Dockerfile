@@ -11,12 +11,12 @@ RUN set -xe \
         # New in PHP 7.4, required for mbstring, see https://github.com/docker-library/php/issues/880
         libonig-dev \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
-    && docker-php-ext-install gd mbstring mysqli soap \
+    && docker-php-ext-install gd mbstring mysqli pgsql pdo_pgsql soap \
     && rm -rf /var/lib/apt/lists/* \
     && a2enmod rewrite
 
-ENV MANTIS_VER 2.28.0
-ENV MANTIS_MD5 1ef230a2066e0f9bcc7070cb025e4dcb
+ENV MANTIS_VER 2.28.1
+ENV MANTIS_MD5 d74e4c681b37503ca608ecc45282951e
 ENV MANTIS_URL https://sourceforge.net/projects/mantisbt/files/mantis-stable/${MANTIS_VER}/mantisbt-${MANTIS_VER}.tar.gz
 ENV MANTIS_FILE mantisbt.tar.gz
 

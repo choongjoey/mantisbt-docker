@@ -13,6 +13,7 @@ The reason is to combine all the useful features they have and add some missing 
 
 - Always latest MantisBT version.
 - Comes with the latest PHP version (8.5 as for 2026)
+- Supports MySQL and PostgreSQL out of the box
 - Allows to easily configure presence of `admin` service folder
 - Comes with built-in integration with Gitlab and Github [source plugins](https://github.com/mantisbt-plugins/source-integration)
 - Example `docker-compose.yml` file provided for getting started in one click!
@@ -60,11 +61,12 @@ services:
       #- SMTP_PASSWORD=superstrongpassword
       #- SMTP_PORT=587
       #- SMTP_MODE=tls # Maps to $g_smtp_connection_mode, defaults to tls, can be ssl or empty
-      # Uncomment only if modified from default values
-      #- MYSQL_HOST=db
-      #- MYSQL_DATABASE=bugtracker
-      #- MYSQL_USER=mantis
-      #- MYSQL_PASSWORD=mantis
+      # Database settings — defaults shown (MySQL). Set DB_TYPE=pgsql for PostgreSQL.
+      #- DB_TYPE=mysql
+      #- DB_HOST=db
+      #- DB_DATABASE=bugtracker
+      #- DB_USER=mantis
+      #- DB_PASSWORD=mantis
     depends_on:
       - db
     restart: always
@@ -129,6 +131,40 @@ $g_max_file_size = 5 * 1024 * 1024;
 $g_allow_anonymous_login = true;
 $g_anonymous_account = 'anonymous';
 
+```
+
+## Database
+
+The following env variables control the database connection:
+
+| Variable | Default | Description |
+|---|---|---|
+| `DB_TYPE` | `mysql` | Database engine: `mysql` or `pgsql` |
+| `DB_HOST` | `db` | Hostname / IP of the database server |
+| `DB_DATABASE` | `bugtracker` | Database name |
+| `DB_USER` | `mantis` | Database username |
+| `DB_PASSWORD` | `mantis` | Database password |
+
+The legacy `MYSQL_HOST`, `MYSQL_DATABASE`, `MYSQL_USER`, and `MYSQL_PASSWORD` variables are still accepted as fallbacks for backward compatibility, but the `DB_*` variables take precedence.
+
+### PostgreSQL example
+
+```yaml
+services:
+  web:
+    environment:
+      - DB_TYPE=pgsql
+      - DB_HOST=db
+      - DB_DATABASE=bugtracker
+      - DB_USER=mantis
+      - DB_PASSWORD=mantis
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=bugtracker
+      - POSTGRES_USER=mantis
+      - POSTGRES_PASSWORD=mantis
 ```
 
 ## Email

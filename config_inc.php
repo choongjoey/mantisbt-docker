@@ -1,11 +1,27 @@
 <?php
 
-$g_db_type           = 'mysqli';
+// DB_TYPE: mysql (default), pgsql
+// Normalise to the MantisBT / ADOdb driver name
+$_db_type = strtolower(getenv('DB_TYPE') !== false ? getenv('DB_TYPE') : 'mysql');
+switch ($_db_type) {
+    case 'pgsql':
+    case 'postgres':
+    case 'postgresql':
+        $g_db_type = 'pgsql';
+        break;
+    default:
+        $g_db_type = 'mysqli';
+}
 
-$g_hostname          = getenv('MYSQL_HOST') !== false ? getenv('MYSQL_HOST') : 'db';
-$g_database_name     = getenv('MYSQL_DATABASE') !== false ? getenv('MYSQL_DATABASE') : 'bugtracker';
-$g_db_username       = getenv('MYSQL_USER') !== false ? getenv('MYSQL_USER') : 'mantis';
-$g_db_password       = getenv('MYSQL_PASSWORD') !== false ? getenv('MYSQL_PASSWORD') : 'mantis';
+// Generic DB_* vars take precedence; MYSQL_* kept for backward compatibility.
+$g_hostname      = getenv('DB_HOST')     !== false ? getenv('DB_HOST')
+                 : (getenv('MYSQL_HOST')     !== false ? getenv('MYSQL_HOST')     : 'db');
+$g_database_name = getenv('DB_DATABASE') !== false ? getenv('DB_DATABASE')
+                 : (getenv('MYSQL_DATABASE') !== false ? getenv('MYSQL_DATABASE') : 'bugtracker');
+$g_db_username   = getenv('DB_USER')     !== false ? getenv('DB_USER')
+                 : (getenv('MYSQL_USER')     !== false ? getenv('MYSQL_USER')     : 'mantis');
+$g_db_password   = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD')
+                 : (getenv('MYSQL_PASSWORD') !== false ? getenv('MYSQL_PASSWORD') : 'mantis');
 
 
 $g_crypto_master_salt       = getenv('MASTER_SALT');

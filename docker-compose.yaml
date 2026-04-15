@@ -23,11 +23,12 @@ services:
       #- SMTP_PASSWORD=superstrongpassword
       #- SMTP_PORT=587
       #- SMTP_MODE=tls # Maps to $g_smtp_connection_mode, defaults to tls, can be ssl or empty
-      # Uncomment only if modified from default values
-      #- MYSQL_HOST=db
-      #- MYSQL_DATABASE=bugtracker
-      #- MYSQL_USER=mantis
-      #- MYSQL_PASSWORD=mantis
+      # Database settings — defaults shown (MySQL). Set DB_TYPE=pgsql for PostgreSQL.
+      #- DB_TYPE=mysql
+      #- DB_HOST=db
+      #- DB_DATABASE=bugtracker
+      #- DB_USER=mantis
+      #- DB_PASSWORD=mantis
     # If you need to customize more options in config, create `config_inc_addon.php` and uncomment lines below
     # This file will be included from the main config.
     #volumes:
