@@ -18,6 +18,7 @@ The reason is to combine all the useful features they have and add some missing 
 - Supports MySQL and PostgreSQL out of the box
 - Allows to easily configure presence of `admin` service folder
 - Comes with built-in integration with Gitlab and Github [source plugins](https://github.com/mantisbt-plugins/source-integration)
+- Bundles a curated set of community plugins (VEditor, Announce, KPI, Statistics, TelegramBot, etc.) — see [Bundled community plugins](#bundled-community-plugins)
 - Example `docker-compose.yml` file provided for getting started in one click!
 - Easy customization of the config files and custom plugins without destroying data from base image
 - Consistent Dockerfile style following all best practices (ensured by Dockerfile lint)
@@ -196,6 +197,25 @@ $g_smtp_password = 'FILLME';
 ```
 
 More details are available in [official documentation](https://www.mantisbt.org/docs/master/en-US/Admin_Guide/html-desktop/#admin.config.email)
+
+## Bundled community plugins
+
+In addition to the [source-integration](https://github.com/mantisbt-plugins/source-integration) plugins (Source, SourceGithub, SourceGitlab), the image ships the following plugins from the [mantisbt-plugins](https://github.com/mantisbt-plugins) organisation. They're copied into `/var/www/html/plugins/` at build time but are **not auto-enabled** — go to `Manage → Manage Plugins` in the Mantis UI and click **Install** on the ones you want.
+
+| Plugin | Pinned ref | Notes |
+|---|---|---|
+| [VEditor](https://github.com/mantisbt-plugins/VEditor) | `v1.1.2` | WYSIWYG editor for issue notes/descriptions |
+| [Announce](https://github.com/mantisbt-plugins/Announce) | `v2.4.6` | Site-wide announcement banner |
+| [Motives](https://github.com/mantisbt-plugins/Motives) | `master` † | Reasons for status changes |
+| [SetDuedate](https://github.com/mantisbt-plugins/SetDuedate) | `main` † | Bulk-set due date on issues |
+| [TelegramBot](https://github.com/mantisbt-plugins/TelegramBot) | `release-1.6.0` | Telegram notifications & interaction |
+| [LinkedCustomFields](https://github.com/mantisbt-plugins/LinkedCustomFields) | `v2.0.2` | Cascading/dependent custom fields |
+| [KPI](https://github.com/mantisbt-plugins/KPI) | `main` † | Project KPI dashboards |
+| [DD_Filter](https://github.com/mantisbt-plugins/DD_Filter) | `main` † | Drill-down filtering |
+| [InlineColumnConfiguration](https://github.com/mantisbt-plugins/InlineColumnConfiguration) | `v2.0.0` | Reorder/toggle columns inline on the issue list |
+| [Statistics](https://github.com/mantisbt-plugins/Statistics) | `main` † | Charts/statistics pages |
+
+† No tagged releases — tracks the default branch, so rebuilds may pick up upstream changes. To override the ref (e.g. pin to a commit SHA), edit the matching `*_REF` `ENV` in the `Dockerfile`.
 
 ## Custom plugins
 

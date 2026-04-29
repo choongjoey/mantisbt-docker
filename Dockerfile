@@ -51,6 +51,46 @@ RUN set -xe && \
         cp -r /tmp/source/Source /tmp/source/SourceGitlab /tmp/source/SourceGithub /var/www/html/plugins/ && \
         rm -r /tmp/source
 
+# Community plugins from https://github.com/mantisbt-plugins
+# Most repos have PluginName.php at the root, so we extract the tarball straight
+# into /var/www/html/plugins/<PluginName>/. TelegramBot is special — its repo
+# carries the plugin in a TelegramBot/ subdirectory, so we extract to a temp
+# dir and copy that subdir over.
+ENV VEDITOR_REF=v1.1.2
+ENV ANNOUNCE_REF=v2.4.6
+ENV MOTIVES_REF=master
+ENV SETDUEDATE_REF=main
+ENV TELEGRAMBOT_REF=release-1.6.0
+ENV LINKEDCUSTOMFIELDS_REF=v2.0.2
+ENV KPI_REF=main
+ENV DD_FILTER_REF=main
+ENV INLINECOLUMNCONFIGURATION_REF=v2.0.0
+ENV STATISTICS_REF=main
+RUN set -xe && \
+        for spec in \
+                "VEditor:${VEDITOR_REF}" \
+                "Announce:${ANNOUNCE_REF}" \
+                "Motives:${MOTIVES_REF}" \
+                "SetDuedate:${SETDUEDATE_REF}" \
+                "LinkedCustomFields:${LINKEDCUSTOMFIELDS_REF}" \
+                "KPI:${KPI_REF}" \
+                "DD_Filter:${DD_FILTER_REF}" \
+                "InlineColumnConfiguration:${INLINECOLUMNCONFIGURATION_REF}" \
+                "Statistics:${STATISTICS_REF}"; \
+        do \
+                repo="${spec%%:*}"; ref="${spec##*:}"; \
+                curl -fSL "https://github.com/mantisbt-plugins/${repo}/tarball/${ref}" -o /tmp/plugin.tar.gz; \
+                mkdir -p "/var/www/html/plugins/${repo}"; \
+                tar -xz --strip-components=1 -f /tmp/plugin.tar.gz -C "/var/www/html/plugins/${repo}/"; \
+                rm /tmp/plugin.tar.gz; \
+        done && \
+        curl -fSL "https://github.com/mantisbt-plugins/TelegramBot/tarball/${TELEGRAMBOT_REF}" -o /tmp/telegrambot.tar.gz && \
+        mkdir /tmp/telegrambot && \
+        tar -xz --strip-components=1 -f /tmp/telegrambot.tar.gz -C /tmp/telegrambot/ && \
+        cp -r /tmp/telegrambot/TelegramBot /var/www/html/plugins/ && \
+        rm -rf /tmp/telegrambot /tmp/telegrambot.tar.gz && \
+        chown -R www-data:www-data /var/www/html/plugins
+
 COPY ./mantis-entrypoint /usr/local/bin/mantis-entrypoint
 
 CMD ["mantis-entrypoint"]
