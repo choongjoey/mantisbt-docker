@@ -10,6 +10,8 @@ RUN set -xe \
         libfreetype6-dev libpng-dev libjpeg-dev libpq-dev libxml2-dev \
         # New in PHP 7.4, required for mbstring, see https://github.com/docker-library/php/issues/880
         libonig-dev \
+        # Used to apply the VEditor source patch against core/bug_api.php
+        patch \
     && docker-php-ext-configure gd --with-jpeg --with-freetype \
     && docker-php-ext-install gd mbstring mysqli pgsql pdo_pgsql soap \
     && rm -rf /var/lib/apt/lists/* \
@@ -20,6 +22,11 @@ ENV MANTIS_MD5 be44e7fb65682d536f24f5aa5b7656cf
 ENV MANTIS_URL https://sourceforge.net/projects/mantisbt/files/mantis-stable/${MANTIS_VER}/mantisbt-${MANTIS_VER}.tar.gz
 ENV MANTIS_FILE mantisbt.tar.gz
 
+# Source patches applied to the upstream MantisBT tree (e.g. VEditor hook in
+# core/bug_api.php). Kept as unified diffs so future MantisBT bumps fail loudly
+# at build time if upstream drifts.
+COPY ./patches /tmp/patches
+
 # Install MantisBT itself
 RUN set -xe \
     && curl -fSL "${MANTIS_URL}" -o "${MANTIS_FILE}" \
@@ -28,6 +35,8 @@ RUN set -xe \
     && tar -xz --strip-components=1 -f "${MANTIS_FILE}" \
     && rm "${MANTIS_FILE}" \
     && rm -r doc \
+    && patch -p1 -d /var/www/html < /tmp/patches/veditor-bug_api.patch \
+    && rm -rf /tmp/patches \
     && chown -R www-data:www-data . \
     # Apply PHP and config fixes
     # Use the default production configuration
@@ -62,10 +71,10 @@ ENV MOTIVES_REF=master
 ENV SETDUEDATE_REF=main
 ENV TELEGRAMBOT_REF=release-1.6.0
 ENV LINKEDCUSTOMFIELDS_REF=v2.0.2
-ENV KPI_REF=main
 ENV DD_FILTER_REF=main
 ENV INLINECOLUMNCONFIGURATION_REF=v2.0.0
 ENV STATISTICS_REF=main
+ENV SNIPPETS_REF=v2.5.0
 RUN set -xe && \
         for spec in \
                 "VEditor:${VEDITOR_REF}" \
@@ -73,10 +82,10 @@ RUN set -xe && \
                 "Motives:${MOTIVES_REF}" \
                 "SetDuedate:${SETDUEDATE_REF}" \
                 "LinkedCustomFields:${LINKEDCUSTOMFIELDS_REF}" \
-                "KPI:${KPI_REF}" \
                 "DD_Filter:${DD_FILTER_REF}" \
                 "InlineColumnConfiguration:${INLINECOLUMNCONFIGURATION_REF}" \
                 "Statistics:${STATISTICS_REF}"; \
+                "Snippets:${SNIPPETS_REF}"; \
         do \
                 repo="${spec%%:*}"; ref="${spec##*:}"; \
                 curl -fSL "https://github.com/mantisbt-plugins/${repo}/tarball/${ref}" -o /tmp/plugin.tar.gz; \

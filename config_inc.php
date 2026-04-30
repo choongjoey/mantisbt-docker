@@ -45,4 +45,11 @@ if (getenv('SMTP_HOST') !== false) {
     $g_smtp_password = getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWORD') : null;
 }
 
+# VEditor: allow blob:/data: images so the TinyMCE clipboard paste flow works.
+# Override in config_inc_addon.php if you need a stricter policy and aren't
+# using VEditor's screenshot-paste feature.
+$g_custom_headers = array(
+    "Content-Security-Policy: default-src *; img-src 'self' blob: data:; script-src 'self'; style-src  'self' 'unsafe-inline' *",
+);
+
 include 'config_inc_addon.php';
