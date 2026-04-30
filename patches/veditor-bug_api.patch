@@ -1,8 +1,6 @@
 --- a/core/bug_api.php
 +++ b/core/bug_api.php
-@@ -1910,6 +1910,12 @@ function bug_get_attachments( $p_bug_id ) {
- 	global $g_cache_bug_attachments;
- 	if( isset( $g_cache_bug_attachments[$p_bug_id] ) ) {
+@@ -1912,6 +1912,12 @@
  		return $g_cache_bug_attachments[$p_bug_id];
  	}
  
@@ -13,3 +11,5 @@
 +	# VEditor end
 +
  	db_param_push();
+ 
+ 	$t_query = 'SELECT id, title, diskfile, filename, filesize, file_type, date_added, user_id, bugnote_id
