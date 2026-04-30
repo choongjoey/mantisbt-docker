@@ -1,0 +1,11 @@
+--- a/core/TelegramBot_bug_api.php
++++ b/core/TelegramBot_bug_api.php
+@@ -93,7 +93,7 @@ function telegram_bug_add( $p_bug_data_draft, $p_orgl_chat_id, $p_callback_msg_i
+         $t_issue['view_state'] = array( 'id' => $t_view_state );
+     }
+
+-    $t_category_id = array_key_exists( 'category', $p_bug_data_draft ) ? $p_bug_data_draft['category'] : 0;
++    $t_category_id = array_key_exists( 'category', $p_bug_data_draft ) ? (int) $p_bug_data_draft['category'] : 0;
+     if( $t_category_id != 0 ) {
+         $t_issue['category'] = array( 'id' => $t_category_id );
+     }
