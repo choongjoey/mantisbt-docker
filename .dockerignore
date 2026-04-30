@@ -3,3 +3,5 @@
 
 !mantis-entrypoint*
 !config_inc.php
+!patches
+!patches/**
