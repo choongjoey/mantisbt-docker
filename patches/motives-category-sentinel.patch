@@ -1,0 +1,11 @@
+--- a/pages/motives_page.php
++++ b/pages/motives_page.php
+@@ -312,7 +312,7 @@
+ 										echo lang_get( 'category' ) . ':&nbsp;';
+ 										echo '<select ' . helper_get_tab_index() . ' id="category_id" name="category_id" class="input-sm">';
+ 										echo '<option value="-1" ' . check_selected( $f_category_id, -1 ) . '>[' . lang_get( 'none' ) . ']</option>';
+-										print_category_option_list( $f_category_id, $t_project_id );
++										print_category_option_list( $f_category_id > 0 ? $f_category_id : 0, $t_project_id );
+ 										echo '</select>';
+ 										?>
+ 									</td>

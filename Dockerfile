@@ -36,7 +36,6 @@ RUN set -xe \
     && rm "${MANTIS_FILE}" \
     && rm -r doc \
     && patch -p1 -d /var/www/html < /tmp/patches/veditor-bug_api.patch \
-    && rm -rf /tmp/patches \
     && chown -R www-data:www-data . \
     # Apply PHP and config fixes
     # Use the default production configuration
@@ -84,7 +83,7 @@ RUN set -xe && \
                 "LinkedCustomFields:${LINKEDCUSTOMFIELDS_REF}" \
                 "DD_Filter:${DD_FILTER_REF}" \
                 "InlineColumnConfiguration:${INLINECOLUMNCONFIGURATION_REF}" \
-                "Statistics:${STATISTICS_REF}"; \
+                "Statistics:${STATISTICS_REF}" \
                 "Snippets:${SNIPPETS_REF}"; \
         do \
                 repo="${spec%%:*}"; ref="${spec##*:}"; \
@@ -98,6 +97,8 @@ RUN set -xe && \
         tar -xz --strip-components=1 -f /tmp/telegrambot.tar.gz -C /tmp/telegrambot/ && \
         cp -r /tmp/telegrambot/TelegramBot /var/www/html/plugins/ && \
         rm -rf /tmp/telegrambot /tmp/telegrambot.tar.gz && \
+        patch -p1 -d /var/www/html/plugins/Motives < /tmp/patches/motives-category-sentinel.patch && \
+        rm -rf /tmp/patches && \
         chown -R www-data:www-data /var/www/html/plugins
 
 COPY ./mantis-entrypoint /usr/local/bin/mantis-entrypoint
