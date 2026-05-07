@@ -211,7 +211,7 @@ In addition to the [source-integration](https://github.com/mantisbt-plugins/sour
 | [TelegramBot](https://github.com/mantisbt-plugins/TelegramBot) | `release-1.6.0` | Telegram notifications & interaction |
 | [LinkedCustomFields](https://github.com/mantisbt-plugins/LinkedCustomFields) | `v2.0.2` | Cascading/dependent custom fields |
 | [KPI](https://github.com/mantisbt-plugins/KPI) | `main` † | Project KPI dashboards |
-| [DD_Filter](https://github.com/mantisbt-plugins/DD_Filter) | `main` † | Drill-down filtering |
+| [CustomizeEmailSubject](https://github.com/mantisbt-plugins/CustomizeEmailSubject) | `master` † | Customize notification email subjects |
 | [InlineColumnConfiguration](https://github.com/mantisbt-plugins/InlineColumnConfiguration) | `v2.0.0` | Reorder/toggle columns inline on the issue list |
 | [Statistics](https://github.com/mantisbt-plugins/Statistics) | `main` † | Charts/statistics pages |
 

@@ -70,7 +70,7 @@ ENV MOTIVES_REF=master
 ENV SETDUEDATE_REF=main
 ENV TELEGRAMBOT_REF=release-1.6.0
 ENV LINKEDCUSTOMFIELDS_REF=v2.0.2
-ENV DD_FILTER_REF=main
+ENV CUSTOMIZEEMAILSUBJECT_REF=master
 ENV INLINECOLUMNCONFIGURATION_REF=v2.0.0
 ENV STATISTICS_REF=main
 ENV SNIPPETS_REF=v2.5.0
@@ -81,7 +81,7 @@ RUN set -xe && \
                 "Motives:${MOTIVES_REF}" \
                 "SetDuedate:${SETDUEDATE_REF}" \
                 "LinkedCustomFields:${LINKEDCUSTOMFIELDS_REF}" \
-                "DD_Filter:${DD_FILTER_REF}" \
+                "CustomizeEmailSubject:${CUSTOMIZEEMAILSUBJECT_REF}" \
                 "InlineColumnConfiguration:${INLINECOLUMNCONFIGURATION_REF}" \
                 "Statistics:${STATISTICS_REF}" \
                 "Snippets:${SNIPPETS_REF}"; \
