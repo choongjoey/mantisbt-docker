@@ -103,6 +103,7 @@ RUN set -xe && \
         rm -rf /tmp/telegrambot /tmp/telegrambot.tar.gz && \
         patch -p1 -d /var/www/html/plugins/Motives < /tmp/patches/motives-category-sentinel.patch && \
         patch -p1 -d /var/www/html/plugins/TelegramBot < /tmp/patches/telegrambot-category-cast.patch && \
+        cp /tmp/patches/attachments-pages.htaccess /var/www/html/plugins/Attachments/pages/.htaccess && \
         rm -rf /tmp/patches && \
         chown -R www-data:www-data /var/www/html/plugins
 
