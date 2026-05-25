@@ -36,6 +36,8 @@ RUN set -xe \
     && rm "${MANTIS_FILE}" \
     && rm -r doc \
     && patch -p1 -d /var/www/html < /tmp/patches/veditor-bug_api.patch \
+    && patch -p1 -d /var/www/html < /tmp/patches/attachments-bug_change_status_page.patch \
+    && patch -p1 -d /var/www/html < /tmp/patches/attachments-bug_update_page.patch \
     && chown -R www-data:www-data . \
     # Apply PHP and config fixes
     # Use the default production configuration
@@ -74,6 +76,7 @@ ENV CUSTOMIZEEMAILSUBJECT_REF=master
 ENV INLINECOLUMNCONFIGURATION_REF=v2.0.0
 ENV STATISTICS_REF=main
 ENV SNIPPETS_REF=v2.5.0
+ENV ATTACHMENTS_REF=21e99e13a8d34e16c1e8e9754d4560029f29b070
 RUN set -xe && \
         for spec in \
                 "VEditor:${VEDITOR_REF}" \
@@ -84,7 +87,8 @@ RUN set -xe && \
                 "CustomizeEmailSubject:${CUSTOMIZEEMAILSUBJECT_REF}" \
                 "InlineColumnConfiguration:${INLINECOLUMNCONFIGURATION_REF}" \
                 "Statistics:${STATISTICS_REF}" \
-                "Snippets:${SNIPPETS_REF}"; \
+                "Snippets:${SNIPPETS_REF}" \
+                "Attachments:${ATTACHMENTS_REF}"; \
         do \
                 repo="${spec%%:*}"; ref="${spec##*:}"; \
                 curl -fSL "https://github.com/mantisbt-plugins/${repo}/tarball/${ref}" -o /tmp/plugin.tar.gz; \
