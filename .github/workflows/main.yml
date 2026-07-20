@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
       - name: set PY
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-        run: echo "::set-env name=PY::$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')"
+        run: echo "PY=$(python -c 'import hashlib, sys;print(hashlib.sha256(sys.version.encode()+sys.executable.encode()).hexdigest())')" >> $GITHUB_ENV
       - uses: actions/cache@v4
         with:
           path: ~/.cache/pre-commit
