@@ -62,11 +62,17 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         'attach_tags'        => 'th.bug-attach-tags',
     );
 
-    function get_custom_fields() {
+    function get_custom_fields( $project_id = null ) {
         if ( !function_exists( 'custom_field_get_ids' ) ) return array();
         try {
+            $use_linked = $project_id !== null
+                && $project_id !== ALL_PROJECTS
+                && function_exists( 'custom_field_get_linked_ids' );
+            $ids = $use_linked
+                ? custom_field_get_linked_ids( $project_id )
+                : custom_field_get_ids();
             $result = array();
-            foreach ( custom_field_get_ids() as $id ) {
+            foreach ( $ids as $id ) {
                 $name = custom_field_get_field( $id, 'name' );
                 $css  = preg_replace( '/[^a-z0-9]+/', '-', strtolower( $name ) );
                 $result[] = array(
@@ -76,7 +82,7 @@ class FieldDescriptionsPlugin extends MantisPlugin {
                 );
             }
             return $result;
-        } catch ( Exception $e ) {
+        } catch ( Throwable $e ) {
             return array();
         }
     }
@@ -99,6 +105,13 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         }
         return $defaults;
     }
+
+    function init() {
+        if ( function_exists( 'http_csp_add' ) ) {
+            http_csp_add( 'script-src', "'unsafe-inline'" );
+        }
+    }
+
 
     function hooks() {
         return array(
@@ -141,7 +154,7 @@ class FieldDescriptionsPlugin extends MantisPlugin {
 
         // Load custom fields with merged global + project config
         $custom_fields_data = array();
-        foreach ( $this->get_custom_fields() as $cf ) {
+        foreach ( $this->get_custom_fields( $project_id ) as $cf ) {
             $id     = $cf['id'];
             $prefix = 'cf_' . $id . '_';
             $g_l = plugin_config_get( $prefix . 'label',       '', false, NO_USER, ALL_PROJECTS );
@@ -359,8 +372,13 @@ class FieldDescriptionsPlugin extends MantisPlugin {
 })();
 </script>
 HTML;
-        } catch ( Exception $e ) {
-            // silently skip — page loads normally without plugin enhancements
+        } catch ( Throwable $e ) {
+            $msg = htmlspecialchars( $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() );
+            echo '<!-- FieldDescriptions plugin error: ' . $msg . ' -->';
+            if ( function_exists( 'access_has_global_level' ) && access_has_global_level( ADMINISTRATOR ) ) {
+                echo '<div style="background:#fff3cd;border:1px solid #ffc107;color:#856404;padding:8px 12px;margin:8px;font-size:12px;border-radius:4px;">'
+                    . '<strong>[FieldDescriptions plugin error]</strong> ' . $msg . '</div>';
+            }
         }
     }
 }

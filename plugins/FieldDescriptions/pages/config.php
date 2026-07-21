@@ -5,10 +5,12 @@ access_ensure_global_level( config_get( 'manage_plugin_threshold' ) );
 $fields     = FieldDescriptionsPlugin::FIELDS;
 $project_id = helper_get_current_project();
 
-// Load all custom fields
+// Load custom fields — project-linked only when a project is selected
 $custom_flds = array();
 if ( function_exists( 'custom_field_get_ids' ) ) {
-    foreach ( custom_field_get_ids() as $cf_id ) {
+    $use_linked = $project_id !== ALL_PROJECTS && function_exists( 'custom_field_get_linked_ids' );
+    $cf_ids = $use_linked ? custom_field_get_linked_ids( $project_id ) : custom_field_get_ids();
+    foreach ( $cf_ids as $cf_id ) {
         $cf_name = custom_field_get_field( $cf_id, 'name' );
         $custom_flds[] = array( 'id' => (int) $cf_id, 'name' => $cf_name );
     }
