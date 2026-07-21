@@ -5,3 +5,5 @@
 !config_inc.php
 !patches
 !patches/**
+!plugins
+!plugins/**
