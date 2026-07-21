@@ -64,16 +64,21 @@ class FieldDescriptionsPlugin extends MantisPlugin {
 
     function get_custom_fields() {
         if ( !function_exists( 'custom_field_get_ids' ) ) return array();
-        $result = array();
-        foreach ( custom_field_get_ids() as $id ) {
-            $name = custom_field_get_field( $id, 'name' );
-            $result[] = array(
-                'id'      => (int) $id,
-                'name'    => $name,
-                'cssName' => custom_field_css_name( $name ),
-            );
+        try {
+            $result = array();
+            foreach ( custom_field_get_ids() as $id ) {
+                $name = custom_field_get_field( $id, 'name' );
+                $css  = preg_replace( '/[^a-z0-9]+/', '-', strtolower( $name ) );
+                $result[] = array(
+                    'id'      => (int) $id,
+                    'name'    => $name,
+                    'cssName' => $css,
+                );
+            }
+            return $result;
+        } catch ( Exception $e ) {
+            return array();
         }
-        return $result;
     }
 
     function register() {
@@ -102,6 +107,7 @@ class FieldDescriptionsPlugin extends MantisPlugin {
     }
 
     function inject_scripts( $p_event ) {
+        try {
         $page = basename( $_SERVER['SCRIPT_NAME'] );
         $form_pages = array( 'bug_report_page.php', 'bug_update_page.php', 'bug_change_status_page.php' );
         $view_pages = array( 'view.php', 'bug_view_page.php', 'bug_view_advanced_page.php' );
@@ -353,5 +359,8 @@ class FieldDescriptionsPlugin extends MantisPlugin {
 })();
 </script>
 HTML;
+        } catch ( Exception $e ) {
+            // silently skip — page loads normally without plugin enhancements
+        }
     }
 }
