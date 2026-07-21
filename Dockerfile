@@ -24,7 +24,9 @@ ENV MANTIS_FILE mantisbt.tar.gz
 
 # Source patches applied to the upstream MantisBT tree (e.g. VEditor hook in
 # core/bug_api.php). Kept as unified diffs so future MantisBT bumps fail loudly
-# at build time if upstream drifts.
+# at build time if upstream drifts. The core patches below are applied inline in
+# the install RUN (stage-bound: after tar extract, before plugins exist); the
+# plugin-tree deltas in patches/ are applied later by apply-plugin-patches.sh.
 COPY ./patches /tmp/patches
 
 # Install MantisBT itself
@@ -52,64 +54,16 @@ RUN set -xe \
 
 COPY config_inc.php /var/www/html/config/config_inc.php
 
-# Install additional plugins
-ENV SOURCE_TAG v2.9.0
+# Plugins are vendored in-repo under plugins/ (pristine upstream@SHA trees plus
+# the repo-owned FieldDescriptions). No plugins are fetched from the network at
+# build time — see scripts/update-plugins.sh and plugins/VENDOR.md for how the
+# vendored trees are refreshed and pinned. Our local deltas stay explicit in
+# patches/ and are applied by apply-plugin-patches.sh against the copied tree.
+COPY ./plugins /var/www/html/plugins
+COPY ./scripts/apply-plugin-patches.sh /tmp/apply-plugin-patches.sh
 RUN set -xe && \
-        curl -fSL https://github.com/mantisbt-plugins/source-integration/tarball/${SOURCE_TAG} -o /tmp/source.tar.gz && \
-        mkdir /tmp/source && \
-        tar -xz --strip-components=1 -f /tmp/source.tar.gz -C /tmp/source/ && \
-        cp -r /tmp/source/Source /tmp/source/SourceGitlab /tmp/source/SourceGithub /var/www/html/plugins/ && \
-        rm -r /tmp/source
-
-# Community plugins from https://github.com/mantisbt-plugins
-# Most repos have PluginName.php at the root, so we extract the tarball straight
-# into /var/www/html/plugins/<PluginName>/. TelegramBot is special — its repo
-# carries the plugin in a TelegramBot/ subdirectory, so we extract to a temp
-# dir and copy that subdir over.
-ENV VEDITOR_REF=v1.1.2
-ENV ANNOUNCE_REF=v2.4.6
-ENV MOTIVES_REF=master
-ENV SETDUEDATE_REF=main
-ENV TELEGRAMBOT_REF=release-1.6.0
-ENV LINKEDCUSTOMFIELDS_REF=v2.0.2
-ENV CUSTOMIZEEMAILSUBJECT_REF=master
-ENV INLINECOLUMNCONFIGURATION_REF=v2.0.0
-ENV STATISTICS_REF=main
-ENV SNIPPETS_REF=v2.5.0
-ENV ATTACHMENTS_REF=21e99e13a8d34e16c1e8e9754d4560029f29b070
-RUN set -xe && \
-        for spec in \
-                "VEditor:${VEDITOR_REF}" \
-                "Announce:${ANNOUNCE_REF}" \
-                "Motives:${MOTIVES_REF}" \
-                "SetDuedate:${SETDUEDATE_REF}" \
-                "LinkedCustomFields:${LINKEDCUSTOMFIELDS_REF}" \
-                "CustomizeEmailSubject:${CUSTOMIZEEMAILSUBJECT_REF}" \
-                "InlineColumnConfiguration:${INLINECOLUMNCONFIGURATION_REF}" \
-                "Statistics:${STATISTICS_REF}" \
-                "Snippets:${SNIPPETS_REF}" \
-                "Attachments:${ATTACHMENTS_REF}"; \
-        do \
-                repo="${spec%%:*}"; ref="${spec##*:}"; \
-                curl -fSL "https://github.com/mantisbt-plugins/${repo}/tarball/${ref}" -o /tmp/plugin.tar.gz; \
-                mkdir -p "/var/www/html/plugins/${repo}"; \
-                tar -xz --strip-components=1 -f /tmp/plugin.tar.gz -C "/var/www/html/plugins/${repo}/"; \
-                rm /tmp/plugin.tar.gz; \
-        done && \
-        curl -fSL "https://github.com/mantisbt-plugins/TelegramBot/tarball/${TELEGRAMBOT_REF}" -o /tmp/telegrambot.tar.gz && \
-        mkdir /tmp/telegrambot && \
-        tar -xz --strip-components=1 -f /tmp/telegrambot.tar.gz -C /tmp/telegrambot/ && \
-        cp -r /tmp/telegrambot/TelegramBot /var/www/html/plugins/ && \
-        rm -rf /tmp/telegrambot /tmp/telegrambot.tar.gz && \
-        patch -p1 -d /var/www/html/plugins/Motives < /tmp/patches/motives-category-sentinel.patch && \
-        patch -p1 -d /var/www/html/plugins/TelegramBot < /tmp/patches/telegrambot-category-cast.patch && \
-        cp /tmp/patches/attachments-pages.htaccess /var/www/html/plugins/Attachments/pages/.htaccess && \
-        rm -rf /tmp/patches && \
-        chown -R www-data:www-data /var/www/html/plugins
-
-# Local plugins bundled in this repo
-COPY ./plugins/FieldDescriptions /var/www/html/plugins/FieldDescriptions
-RUN chown -R www-data:www-data /var/www/html/plugins/FieldDescriptions
+        bash /tmp/apply-plugin-patches.sh && \
+        rm -rf /tmp/patches /tmp/apply-plugin-patches.sh
 
 COPY ./mantis-entrypoint /usr/local/bin/mantis-entrypoint
 

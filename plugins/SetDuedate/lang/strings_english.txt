@@ -1,0 +1,18 @@
+<?PHP
+	$s_plugin_format_title = "Set Duedate";
+	$s_plugin_customceporter_config = "Configuration";
+	$s_duedate_days ="Minimum due date in days for undefined priorities";
+	$s_duedate_priority ="Default due date in days for priority: ";
+	$s_change_configuration ="Update Config";
+	$s_cat_definition ="Define Duedays by category/priority";
+	$s_prio_definition ="Define Duedays by Priority";
+	$s_due_submit ="Add definition";
+	$s_cat_title ="Project<=>Category";
+	$s_cat_duedays = "Days";
+	$s_due_remove ="Remove";
+	$s_duedate_enabled= 'Yes';
+	$s_duedate_disabled= 'No'; 
+	$s_overrule_duedate = 'Adjust duedate after each update';
+	$s_skip_duedate = 'Skip calculation of Duedate on Global Level (if no settings are made on project/category level)';
+	$s_duedate_config = 'Yes';
+

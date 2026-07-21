@@ -1,9 +1,13 @@
+# Reference/example compose file — copy it and adjust for your environment.
+# It is intended as a starting point (see the README Quick start), not a
+# production-ready deployment: set MASTER_SALT, change default passwords, pin
+# the image tag, and disable the admin folder before going live.
 version: "3"
 
 services:
   web:
     # Pin the version for production usage!
-    image: okainov/mantisbt:latest
+    image: choongjoey/mantisbt:latest
     container_name: mantis_web
     ports:
       - "8989:80"

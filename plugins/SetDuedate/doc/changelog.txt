@@ -1,0 +1,11 @@
+Version 1.0		09-11-2010	Initial release
+Version 2.0		02-03-2011	Calculations based upon priority
+Version 2.1		03-03-2011	Days used in calculation are working days (ie excluding weekends)
+Version 2.11	03-03-2011	Bugfix
+Version 3.0		08-06-2012	Added option to set duedays by Project/category
+Version 3.1		05-07-2012	Extended the project/category option with Priority
+Version 4.01	24-01-2017	Compatibility with Mantis 2.x
+Version 4.02				Bugfixes
+Version 4.03	08-12-2020	Improved compatibility
+Version 4.04	01-06-2023	Added option to bypass Duedate setting on global level
+Version 4.05	07-01-2024	Replaced print_succesful_redirect

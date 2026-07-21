@@ -1,0 +1,3 @@
+Version: 4.05 #
+Devurl: https://github.com/mantisbt-plugins/SetDuedate/blob/main/version.txt #
+Location: https://github.com/mantisbt-plugins/SetDuedate/archive/refs/heads/main.zip #

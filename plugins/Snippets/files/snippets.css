@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2010 - 2012  Amethyst Reese
+ * Copyright (c) 2012 - 2021  MantisBT Team - mantisbt-dev@lists.sourceforge.net
+ * Licensed under the MIT license
+ */
+
+.snippetsTooltip {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	background: #FAF3AA;
+	border: 1px dotted #000;
+	padding: 4px;
+	display: none;
+	font-size: 8pt;
+}
+
+.snippetsTooltip table {
+	margin: 5px;
+	padding: 0px;
+}
+.snippetsTooltip td {
+	padding: 1px;
+	font-size: 8pt;
+}
+
+.qtip-content table {
+	background-color: transparent !important;
+}
+.qtip-content table td {
+	padding: 0 5px;
+}
+
+/* Snippets list layout */
+.width-5 {
+	width: 5%;
+}
+
+table#snippets-list-footer {
+	background-color: transparent !important;
+	margin-bottom: 0 !important;
+}
+
+tr.spacer > td {
+	border-bottom-width: 0 !important;
+}

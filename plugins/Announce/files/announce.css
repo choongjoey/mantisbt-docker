@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2010 John Reese
+ * Copyright (c) 2017 Damien Regad
+ * Licensed under the MIT license
+ */
+
+.announcement {
+	background: #FAF3AA;
+	margin: 8px 8px 0;
+	border-radius: 4px;
+	padding: 5px 5px 5px 12px;
+}
+
+.announcement-dismiss {
+	float: right;
+	padding: 3px;
+	cursor: pointer;
+}
+
+.announcement-msg p {
+	margin: 0;
+}
+
+.warning-last-context {
+	margin-top: 0.5em;
+	display: none;
+}
+
+input.ttl {
+	width: 5em;
+}

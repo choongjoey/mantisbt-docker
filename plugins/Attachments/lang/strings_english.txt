@@ -1,0 +1,4 @@
+<?php
+$s_plugin_Attachments_title				= 'Re-instate Attachment section';
+$s_plugin_Attachments_add_file_button	= 'Upload selected file';
+$s_plugin_Attachments_customized		= 'Use Customized Setup';

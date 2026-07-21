@@ -1,0 +1,170 @@
+<?php
+# Copyright (c) 2018 Grigoriy Ermolaev (igflocal@gmail.com)
+# TelegramBot for MantisBT is free software: 
+# you can redistribute it and/or modify it under the terms of the GNU
+# General Public License as published by the Free Software Foundation, 
+# either version 2 of the License, or (at your option) any later version.
+#
+# TelegramBot plugin for for MantisBT is distributed in the hope 
+# that it will be useful, but WITHOUT ANY WARRANTY; without even the 
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+# See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Customer management plugin for MantisBT.  
+# If not, see <http://www.gnu.org/licenses/>.
+
+$s_plugin_TelegramBot_name_plugin_description_page = 'Telegram Bot';
+$s_plugin_TelegramBot_description = 'Adds the user interaction function to the MantisBT via the Telegram messenger.';
+
+$s_plugin_TelegramBot_config_title = 'Settings';
+$s_plugin_TelegramBot_manage_config_message_page = 'Configure Notifications';
+$s_plugin_TelegramBot_bot_name = 'Bot name (required for bot authorization when receiving messages)';
+$s_plugin_TelegramBot_api_key = 'API key (required for bot authorization when sending messages)';
+$s_plugin_TelegramBot_proxy_address_header = 'SOCKS5 proxy server address: socks5://';
+$s_plugin_TelegramBot_time_out_server_response_header = 'Server response timeout (30 seconds by default):';
+$s_plugin_TelegramBot_current_config = 'The bot will send updates to the following URL:';
+$s_plugin_TelegramBot_response_from_telegram = 'Telegram server response: ';
+$s_plugin_TelegramBot_debug_connection_log_path_title = 'Path to log file';
+$s_plugin_TelegramBot_debug_connection_enabled = 'Enable connection debug mode?';
+$s_plugin_TelegramBot_config_page = 'General settings';
+$s_plugin_TelegramBot_monitor_page = 'Users monitor';
+$s_plugin_TelegramBot_ERROR_CURL_VERSION = 'REQUIRED CURL >= 7.21.7 ';
+
+$s_plugin_TelegramBot_bot_successfully_attached = 'The bot is successfully attached.';
+$s_plugin_TelegramBot_info_to_redirect_bot_page = 'Return to the chat, or wait for redirection.';
+$s_plugin_TelegramBot_user_relationship_question = 'Associate your account with a bot?';
+$s_plugin_TelegramBot_user_relationship_yes = 'YES';
+$s_plugin_TelegramBot_user_relationship_no = 'NO';
+
+$s_plugin_TelegramBot_registration_message_text = 'In order to start using the bot it is necessary:
+1. Have a valid account in %1$s.
+2. Link your account by clicking on the button below.
+';
+$s_plugin_TelegramBot_registration_button_text = 'Confirm the binding';
+
+$s_plugin_TelegramBot_first_message = '
+You have successfully subscribed to the chat-bot
+%1$s
+If you want to unsubscribe, then just send
+command / stop and follow the instructions.
+
+The following actions are currently available with bugs: 
+- report bugs;
+- add comments;
+- attach files;
+- receive notifications;
+- respond to messages through the built-in Telegram "reply to message".
+
+Notification settings %2$s
+
+Just send a comment or file to the chat and follow the instructions.';
+
+$s_plugin_TelegramBot_end_message = '
+You are unsubscribed from the chat-bot.
+To subscribe, send any message and follow the instructions.';
+
+$s_plugin_TelegramBot_help_registration_bot_header = 'Instructions for setting up the bot';
+$s_plugin_TelegramBot_help_registration_bot_message = 'To activate the bot, you must:<br><br>
+1. Find a bot BotFather follow the link %1$s or by finding it in the instant messenger through a search <br>
+2. Send a message /newbot in the chat with BotFather <br>
+3. Send as "Short_Name_Bot" <br>
+4. Send as "login_bot_bot" (Note that the login must end in _bot) <br>
+5. After BotFather reports that the bot was created, copy the token and bot login to the appropriate fields below and apply the changes. <br>
+6. Next, you need to send the user a bot name or link in the form https://t.me/"login_your_bot"'; 
+
+
+$s_plugin_TelegramBot_action_select = 'Select an action from:';
+$s_plugin_TelegramBot_bug_section_select = 'Select a section with bugs:';
+$s_plugin_TelegramBot_bug_select = 'Select a bug';
+$s_plugin_TelegramBot_content_upload_complete = 'The content is attached to the bug: ';
+$s_plugin_TelegramBot_comment_add_complete = 'Comment added to bug: ';
+$s_plugin_TelegramBot_keyboard_button_list_of_sections = 'List of sections';
+$s_plugin_TelegramBot_keyboard_button_back = 'К списку действий';
+
+$s_plugin_TelegramBot_error_file_size = 'The file should not exceed 20 MB';
+$s_plugin_TelegramBot_error_content_type = 'The request is not supported by this bot';
+
+$s_plugin_TelegramBot_get_description = 'ENTER DESCRIPTION TEXT:';
+$s_plugin_TelegramBot_get_summary = 'ENTER SUMMARY TEXT:';
+$s_plugin_TelegramBot_bug_creation_complete = 'Created %1$s: ';
+
+
+$s_plugin_TelegramBot_telegram_message_notification_title_for_status_bug_new = 'The following issue is now in status NEW (again)';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_status_bug_feedback = 'The following issue requires your FEEDBACK.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_status_bug_acknowledged = 'The following issue has been ACKNOWLEDGED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_status_bug_confirmed = 'The following issue has been CONFIRMED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_status_bug_assigned = 'The following issue has been ASSIGNED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_status_bug_resolved = 'The following issue has been RESOLVED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_status_bug_closed = 'The following issue has been CLOSED';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_bug_submitted = 'The following issue has been SUBMITTED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_bug_assigned = 'The following issue has been ASSIGNED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_bug_unassigned = 'The following issue has been UNASSIGNED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_bug_reopened = 'The following issue has been REOPENED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_bug_deleted = 'The following issue has been DELETED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_bug_updated = 'The following issue has been UPDATED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_sponsorship_added = 'The following issue has been SPONSORED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_sponsorship_updated = 'A sponsorship of the following issue was modified.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_sponsorship_deleted = 'A sponsorship of the following issue was withdrawn.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_bugnote_submitted = 'A NOTE has been added to this issue.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_duplicate_of_relationship_added = 'The following issue has been set as DUPLICATE OF issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_has_duplicate_relationship_added = 'The issue %1$s has been set as DUPLICATE OF the following issue.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_related_to_relationship_added = 'The following issue has been set as RELATED TO issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_dependant_on_relationship_added = 'The following issue has been set PARENT OF issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_blocks_relationship_added = 'The following issue has been set CHILD OF issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_duplicate_of_relationship_deleted = 'The following issue has been UNset as DUPLICATE OF issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_has_duplicate_relationship_deleted = 'The issue %1$s has been removed as a DUPLICATE OF the following issue.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_related_to_relationship_deleted = 'The following issue has been marked as UNRELATED TO issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_dependant_on_relationship_deleted = 'The following issue has been removed as the PARENT OF issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_blocks_relationship_deleted = 'The following issue has been removed as the CHILD OF issue %1$s.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_relationship_child_resolved = 'The RELATED issue %1$s has been RESOLVED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_relationship_child_closed = 'The RELATED issue %1$s has been CLOSED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_related_issue_deleted = 'The RELATED issue %1$s has been DELETED.';
+$s_plugin_TelegramBot_telegram_message_notification_title_for_action_monitor = 'Issue %1$s is now monitored by user %2$s.';
+
+$s_plugin_TelegramBot_telegram_message_reporter = 'Reported By';
+$s_plugin_TelegramBot_telegram_message_handler = 'Assigned To';
+$s_plugin_TelegramBot_telegram_message_project = 'Project';
+$s_plugin_TelegramBot_telegram_message_bug = 'Issue ID';
+$s_plugin_TelegramBot_telegram_message_category = 'Category';
+$s_plugin_TelegramBot_telegram_message_reproducibility = 'Reproducibility';
+$s_plugin_TelegramBot_telegram_message_severity = 'Severity';
+$s_plugin_TelegramBot_telegram_message_priority = 'Priority';
+$s_plugin_TelegramBot_telegram_message_status = 'Status';
+$s_plugin_TelegramBot_telegram_message_resolution = 'Resolution';
+$s_plugin_TelegramBot_telegram_message_duplicate = 'Duplicate';
+$s_plugin_TelegramBot_telegram_message_fixed_in_version = 'Fixed in Version';
+$s_plugin_TelegramBot_telegram_message_target_version = 'Target Version';
+$s_plugin_TelegramBot_telegram_message_date_submitted = 'Date Submitted';
+$s_plugin_TelegramBot_telegram_message_last_modified = 'Last Modified';
+$s_plugin_TelegramBot_telegram_message_summary = 'Summary';
+$s_plugin_TelegramBot_telegram_message_description = 'Description';
+$s_plugin_TelegramBot_telegram_message_additional_information = 'Additional Information';
+$s_plugin_TelegramBot_telegram_message_steps_to_reproduce = 'Steps to Reproduce';
+$s_plugin_TelegramBot_telegram_message_tag = 'Tags';
+$s_plugin_TelegramBot_telegram_message_due_date = 'Due Date';
+
+$s_plugin_TelegramBot_telegram_message_on_new = 'Notification on New';
+$s_plugin_TelegramBot_telegram_message_on_assigned = 'Notification on Change of Handler';
+$s_plugin_TelegramBot_telegram_message_on_feedback = 'Notification on Feedback';
+$s_plugin_TelegramBot_telegram_message_on_resolved = 'Notification on Resolved';
+$s_plugin_TelegramBot_telegram_message_on_closed = 'Notification on Closed';
+$s_plugin_TelegramBot_telegram_message_on_reopened = 'Notification on Reopened';
+$s_plugin_TelegramBot_telegram_message_on_bugnote_added = 'Notification on Note Added';
+$s_plugin_TelegramBot_telegram_message_on_status_change = 'Notification on Status Change';
+$s_plugin_TelegramBot_telegram_message_on_priority_change = 'Notification on Priority Change';
+$s_plugin_TelegramBot_telegram_message_bugnote_limit = 'Notification Notes Limit';
+$s_plugin_TelegramBot_telegram_message_full_issue_details = 'Notification Full Issue Details';
+$s_plugin_TelegramBot_telegram_message_included_all_bugnote_is = 'Include all comments in the notification when status changes';
+
+$s_plugin_TelegramBot_account_telegram_prefs_page_header = 'Telegram settings';
+$s_plugin_TelegramBot_default_account_telegram_preferences_title = 'Settings bot Telegram';
+$s_plugin_TelegramBot_account_telegram_prefs_subscribe_bot = 'To sign on to the bot, find it ( %1$s ) in Telegram or follow the link: ';
+$s_plugin_TelegramBot_account_telegram_prefs_associated_users_head = 'Connected users:';
+$s_plugin_TelegramBot_monitor_page_url_not_set = 'Webhook is not set up.';
+$s_plugin_TelegramBot_monitor_page_pending_update_count = 'Number of updates awaiting delivery:';
+$s_plugin_TelegramBot_monitor_page_last_error_date = 'Date for the most recent error that happened when trying to deliver an update via webhook';
+$s_plugin_TelegramBot_monitor_page_last_error_message = 'Error message for the most recent error that happened when trying to deliver an update via webhook';
+$s_plugin_TelegramBot_command_not_found = 'Command not found.';
+
+$s_plugin_TelegramBot_BAD_REQUEST = 'ERROR IN THE BODY OF THE REQUEST.';

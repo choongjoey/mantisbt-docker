@@ -13,12 +13,12 @@ There are some other alternative images exist already such as [vimagick/mantisbt
 
 The reason is to combine all the useful features they have and add some missing ones. To list some:
 
-- Always latest MantisBT version.
+- Ships a pinned, tested MantisBT version (currently `2.28.1`)
 - Comes with the latest PHP version (8.5 as for 2026)
 - Supports MySQL and PostgreSQL out of the box
 - Allows to easily configure presence of `admin` service folder
 - Comes with built-in integration with Gitlab and Github [source plugins](https://github.com/mantisbt-plugins/source-integration)
-- Bundles a curated set of community plugins (VEditor, Announce, KPI, Statistics, TelegramBot, etc.) — see [Bundled community plugins](#bundled-community-plugins)
+- Bundles a curated set of community plugins (VEditor, Announce, Statistics, TelegramBot, etc.); see [Bundled community plugins](#bundled-community-plugins)
 - Example `docker-compose.yml` file provided for getting started in one click!
 - Easy customization of the config files and custom plugins without destroying data from base image
 - Consistent Dockerfile style following all best practices (ensured by Dockerfile lint)
@@ -39,6 +39,8 @@ https://www.mantisbt.org/docs/master/en-US/Admin_Guide/html-desktop/#admin.confi
 For further details refer to [official documentation](https://www.mantisbt.org/docs/master/en-US/Admin_Guide/html-desktop/#admin.install.new)
 
 ## Example docker-compose.yml
+
+The `docker-compose.yaml` in this repo is a reference example: a starting point to copy and adapt, not a production-ready deployment. Before going live, set `MASTER_SALT`, change the default database passwords, pin the image tag, and disable the admin folder.
 
 ```YAML
 version: "3"
@@ -200,7 +202,9 @@ More details are available in [official documentation](https://www.mantisbt.org/
 
 ## Bundled community plugins
 
-In addition to the [source-integration](https://github.com/mantisbt-plugins/source-integration) plugins (Source, SourceGithub, SourceGitlab), the image ships the following plugins from the [mantisbt-plugins](https://github.com/mantisbt-plugins) organisation. They're copied into `/var/www/html/plugins/` at build time but are **not auto-enabled** — go to `Manage → Manage Plugins` in the Mantis UI and click **Install** on the ones you want.
+In addition to the [source-integration](https://github.com/mantisbt-plugins/source-integration) plugins (Source, SourceGithub, SourceGitlab), the image ships the following plugins from the [mantisbt-plugins](https://github.com/mantisbt-plugins) organisation. They are vendored in-repo under `plugins/` (a pristine copy of each upstream tree, frozen to a commit SHA) and copied into `/var/www/html/plugins/` at build time, so the build pulls no plugins over the network and is reproducible. They are **not auto-enabled**: open `Manage → Manage Plugins` in the Mantis UI and click **Install** on the ones you want.
+
+Run [`scripts/update-plugins.sh`](scripts/update-plugins.sh) to refresh the vendored trees. It resolves each requested ref to a commit SHA and records the provenance (repo, requested ref, resolved SHA, date) in [`plugins/VENDOR.md`](plugins/VENDOR.md).
 
 | Plugin | Pinned ref | Notes |
 |---|---|---|
@@ -210,13 +214,19 @@ In addition to the [source-integration](https://github.com/mantisbt-plugins/sour
 | [SetDuedate](https://github.com/mantisbt-plugins/SetDuedate) | `main` † | Bulk-set due date on issues |
 | [TelegramBot](https://github.com/mantisbt-plugins/TelegramBot) | `release-1.6.0` | Telegram notifications & interaction |
 | [LinkedCustomFields](https://github.com/mantisbt-plugins/LinkedCustomFields) | `v2.0.2` | Cascading/dependent custom fields |
-| [KPI](https://github.com/mantisbt-plugins/KPI) | `main` † | Project KPI dashboards |
 | [CustomizeEmailSubject](https://github.com/mantisbt-plugins/CustomizeEmailSubject) | `master` † | Customize notification email subjects |
 | [InlineColumnConfiguration](https://github.com/mantisbt-plugins/InlineColumnConfiguration) | `v2.0.0` | Reorder/toggle columns inline on the issue list |
 | [Statistics](https://github.com/mantisbt-plugins/Statistics) | `main` † | Charts/statistics pages |
+| [Snippets](https://github.com/mantisbt-plugins/Snippets) | `v2.5.0` | Reusable text snippets for notes/descriptions |
+| [Attachments](https://github.com/mantisbt-plugins/Attachments) | pinned SHA | Extra attachment handling on bug pages |
+| FieldDescriptions | local, bundled | Configurable field labels and hints (repo-owned) |
 
-† No tagged releases — tracks the default branch, so rebuilds may pick up upstream changes. To override the ref (e.g. pin to a commit SHA), edit the matching `*_REF` `ENV` in the `Dockerfile`.
+† No tagged releases upstream. The ref tracked the default branch, so the vendored copy is frozen to the commit SHA that [`plugins/VENDOR.md`](plugins/VENDOR.md) recorded when it was last refreshed.
 
 ## Custom plugins
 
 In order to add your own custom plugins into the image, either create your own Dockerfile and copy extra plugins to `/var/www/html/plugins/` or add volume in docker-compose to mount extra plugin directly inside existing image `./custom_plugin/:/var/www/html/plugins/custom_plugin/`
+
+## Updating bundled plugins
+
+To update a bundled plugin, edit its ref in [`scripts/plugins.manifest`](scripts/plugins.manifest), run [`scripts/update-plugins.sh`](scripts/update-plugins.sh), then review the diff and commit. The full add/remove/update procedures for maintainers live in [`AGENTS.md`](AGENTS.md).

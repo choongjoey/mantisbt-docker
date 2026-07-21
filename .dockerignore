@@ -7,3 +7,5 @@
 !patches/**
 !plugins
 !plugins/**
+!scripts
+!scripts/apply-plugin-patches.sh
