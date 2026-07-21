@@ -33,8 +33,6 @@ services:
     # This file will be included from the main config.
     #volumes:
     #  - ./config_inc_addon.php:/var/www/html/config/config_inc_addon.php
-    volumes:
-      - ./plugins/FieldDescriptions:/var/www/html/plugins/FieldDescriptions
     depends_on:
       - db
     restart: always

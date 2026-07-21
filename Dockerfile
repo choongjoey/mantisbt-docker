@@ -107,6 +107,10 @@ RUN set -xe && \
         rm -rf /tmp/patches && \
         chown -R www-data:www-data /var/www/html/plugins
 
+# Local plugins bundled in this repo
+COPY ./plugins/FieldDescriptions /var/www/html/plugins/FieldDescriptions
+RUN chown -R www-data:www-data /var/www/html/plugins/FieldDescriptions
+
 COPY ./mantis-entrypoint /usr/local/bin/mantis-entrypoint
 
 CMD ["mantis-entrypoint"]

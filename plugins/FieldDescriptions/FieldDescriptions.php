@@ -95,10 +95,6 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         return $defaults;
     }
 
-    function init() {
-        http_csp_add( 'script-src', "'unsafe-inline'" );
-    }
-
     function hooks() {
         return array(
             'EVENT_LAYOUT_PAGE_FOOTER' => 'inject_scripts',
@@ -167,19 +163,22 @@ class FieldDescriptionsPlugin extends MantisPlugin {
             return;
         }
 
+        http_csp_add( 'script-src', "'unsafe-inline'" );
+
+        $flags = JSON_HEX_TAG | JSON_HEX_AMP;
         $global_json = json_encode( array(
             'labels' => $global_labels, 'descriptions' => $global_descs, 'placeholders' => $global_phs,
-        ) );
+        ), $flags );
         $proj_json = json_encode( array(
             'labels' => $proj_labels, 'descriptions' => $proj_descs, 'placeholders' => $proj_phs,
-        ) );
+        ), $flags );
 
         $is_form_js = $is_form ? 'true' : 'false';
         $is_list_js = $is_list ? 'true' : 'false';
         $view_selectors_json  = json_encode( self::VIEW_SELECTORS );
         $list_selectors_json  = json_encode( self::LIST_SELECTORS );
         $default_labels_json  = json_encode( self::FIELDS );
-        $custom_fields_json   = json_encode( array_values( $custom_fields_data ) );
+        $custom_fields_json   = json_encode( array_values( $custom_fields_data ), $flags );
 
         echo <<<HTML
 <script>

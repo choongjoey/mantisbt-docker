@@ -20,6 +20,7 @@ $project_name = ( $project_id === ALL_PROJECTS )
 
 // Handle save
 if ( isset( $_POST['save'] ) ) {
+    form_security_validate( 'plugin_FieldDescriptions_config' );
     foreach ( array_keys( $fields ) as $field ) {
         plugin_config_set( $field . '_label',       gpc_get_string( $field . '_label', '' ),       NO_USER, $project_id );
         plugin_config_set( $field . '_desc',        gpc_get_string( $field . '_desc', '' ),        NO_USER, $project_id );
@@ -126,15 +127,9 @@ $saved = gpc_get_bool( 'saved', false );
         $row_style = $has_project_val ? 'background:#f2fff2;' : 'background:#f2f8ff;';
     }
 
-    $label_val = ( $project_id !== ALL_PROJECTS )
-        ? plugin_config_get( $field . '_label',       '', false, NO_USER, $project_id )
-        : plugin_config_get( $field . '_label',       '', false, NO_USER, ALL_PROJECTS );
-    $desc_val  = ( $project_id !== ALL_PROJECTS )
-        ? plugin_config_get( $field . '_desc',        '', false, NO_USER, $project_id )
-        : plugin_config_get( $field . '_desc',        '', false, NO_USER, ALL_PROJECTS );
-    $ph_val    = ( $project_id !== ALL_PROJECTS )
-        ? plugin_config_get( $field . '_placeholder', '', false, NO_USER, $project_id )
-        : plugin_config_get( $field . '_placeholder', '', false, NO_USER, ALL_PROJECTS );
+    $label_val = fd_get_val( $field . '_label',       $project_id );
+    $desc_val  = fd_get_val( $field . '_desc',        $project_id );
+    $ph_val    = fd_get_val( $field . '_placeholder', $project_id );
 
     $label_hint = ( $project_id !== ALL_PROJECTS )
         ? ( plugin_config_get( $field . '_label', '', false, NO_USER, ALL_PROJECTS ) ?: $default_label )
@@ -192,15 +187,9 @@ $saved = gpc_get_bool( 'saved', false );
     <tbody>
     <?php foreach ( $custom_flds as $cf ):
         $prefix    = 'cf_' . $cf['id'] . '_';
-        $cf_label  = ( $project_id !== ALL_PROJECTS )
-            ? plugin_config_get( $prefix . 'label',       '', false, NO_USER, $project_id )
-            : plugin_config_get( $prefix . 'label',       '', false, NO_USER, ALL_PROJECTS );
-        $cf_desc   = ( $project_id !== ALL_PROJECTS )
-            ? plugin_config_get( $prefix . 'desc',        '', false, NO_USER, $project_id )
-            : plugin_config_get( $prefix . 'desc',        '', false, NO_USER, ALL_PROJECTS );
-        $cf_ph     = ( $project_id !== ALL_PROJECTS )
-            ? plugin_config_get( $prefix . 'placeholder', '', false, NO_USER, $project_id )
-            : plugin_config_get( $prefix . 'placeholder', '', false, NO_USER, ALL_PROJECTS );
+        $cf_label  = fd_get_val( $prefix . 'label',       $project_id );
+        $cf_desc   = fd_get_val( $prefix . 'desc',        $project_id );
+        $cf_ph     = fd_get_val( $prefix . 'placeholder', $project_id );
     ?>
     <tr>
         <td><strong><?php echo htmlspecialchars( $cf['name'] ); ?></strong><br><small class="text-muted">cf_<?php echo $cf['id']; ?></small></td>
