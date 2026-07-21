@@ -182,8 +182,6 @@ class FieldDescriptionsPlugin extends MantisPlugin {
             return;
         }
 
-        http_csp_add( 'script-src', "'unsafe-inline'" );
-
         $flags = JSON_HEX_TAG | JSON_HEX_AMP;
         $global_json = json_encode( array(
             'labels' => $global_labels, 'descriptions' => $global_descs, 'placeholders' => $global_phs,
