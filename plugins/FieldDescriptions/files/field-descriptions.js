@@ -23,6 +23,48 @@
     var descriptions = merge(cfg.global.descriptions, cfg.project.descriptions);
     var placeholders = merge(cfg.global.placeholders, cfg.project.placeholders);
 
+    // --- TinyMCE placeholder support ---
+    var pendingMce = {}; // editorId -> placeholder text
+
+    function applyMcePlaceholder(editor, text) {
+        var body = editor.getBody();
+        body.setAttribute('data-fd-ph', text);
+        editor.dom.addStyle(
+            'body[data-fd-ph]::before{content:attr(data-fd-ph);color:#aaa;display:block;' +
+            'position:absolute;pointer-events:none;font-style:italic;}' +
+            'body[data-fd-ph-active]::before{display:none;}'
+        );
+        function update() {
+            var empty = editor.getContent({ format: 'text' }).trim() === '';
+            if (empty) { body.removeAttribute('data-fd-ph-active'); }
+            else { body.setAttribute('data-fd-ph-active', ''); }
+        }
+        editor.on('input keyup Change SetContent', update);
+        update();
+    }
+
+    function setMcePlaceholder(editorId, text) {
+        if (!window.tinymce) { pendingMce[editorId] = text; return; }
+        var editor = tinymce.get(editorId);
+        if (editor) {
+            applyMcePlaceholder(editor, text);
+        } else {
+            pendingMce[editorId] = text;
+        }
+    }
+
+    // Handle editors that initialize after our script runs
+    if (window.tinymce) {
+        tinymce.on('AddEditor', function(e) {
+            var id = e.editor.id;
+            if (pendingMce[id]) {
+                applyMcePlaceholder(e.editor, pendingMce[id]);
+                delete pendingMce[id];
+            }
+        });
+    }
+    // --- end TinyMCE support ---
+
     function applyEnhancements() {
         var allFields = Object.keys(labels).concat(Object.keys(descriptions)).concat(Object.keys(placeholders))
             .filter(function(v, i, a) { return a.indexOf(v) === i; });
@@ -50,7 +92,10 @@
                 }
                 var labelEl = document.querySelector('label[for="' + el.id + '"]');
                 if (!labelEl && altName) labelEl = document.querySelector('label[for="' + altName + '"]');
-                if (placeholders[name]) el.placeholder = placeholders[name];
+                if (placeholders[name]) {
+                    el.placeholder = placeholders[name];
+                    if (el.id) setMcePlaceholder(el.id, placeholders[name]);
+                }
                 if (descriptions[name]) {
                     var hintParent = labelEl ? labelEl.parentNode : el.parentNode;
                     var hintAfter  = labelEl ? labelEl.nextSibling  : el.nextSibling;
@@ -100,7 +145,10 @@
                 var el = document.querySelector('[name="custom_field_' + cf.id + '"], [name="custom_field_' + cf.id + '[]"]');
                 if (!el) return;
                 var labelEl = document.querySelector('label[for="custom_field_' + cf.id + '"]');
-                if (cf.ph) el.placeholder = cf.ph;
+                if (cf.ph) {
+                    el.placeholder = cf.ph;
+                    if (el.id) setMcePlaceholder(el.id, cf.ph);
+                }
                 if (cf.desc) {
                     var hintParent = labelEl ? labelEl.parentNode : el.parentNode;
                     var hintAfter  = labelEl ? labelEl.nextSibling  : el.nextSibling;
