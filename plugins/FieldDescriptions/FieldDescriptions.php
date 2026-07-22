@@ -197,179 +197,19 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         $default_labels_json  = json_encode( self::FIELDS );
         $custom_fields_json   = json_encode( array_values( $custom_fields_data ), $flags );
 
-        echo <<<HTML
-<script>
-(function() {
-    var isFormPage     = {$is_form_js};
-    var isListPage     = {$is_list_js};
-    var viewSelectors  = {$view_selectors_json};
-    var listSelectors  = {$list_selectors_json};
-    var defaultLabels  = {$default_labels_json};
-    var customFields   = {$custom_fields_json};
-
-    function merge(base, override) {
-        var result = {};
-        Object.keys(base).forEach(function(k) { result[k] = base[k]; });
-        Object.keys(override).forEach(function(k) { result[k] = override[k]; });
-        return result;
-    }
-    var global  = {$global_json};
-    var project = {$proj_json};
-    var labels       = merge(global.labels,       project.labels);
-    var descriptions = merge(global.descriptions, project.descriptions);
-    var placeholders = merge(global.placeholders, project.placeholders);
-
-    function applyEnhancements() {
-        var allFields = Object.keys(labels).concat(Object.keys(descriptions)).concat(Object.keys(placeholders))
-            .filter(function(v, i, a) { return a.indexOf(v) === i; });
-
-        allFields.forEach(function(name) {
-            if (isFormPage) {
-                // Form pages: find by input[name]
-                var aliases = {'additional_info': 'additional_information'};
-                var altName = aliases[name] || null;
-                var el = document.querySelector(
-                    '[name="' + name + '"], [name="' + name + '[]"]' +
-                    (altName ? ', [name="' + altName + '"], [name="' + altName + '[]"]' : '')
-                );
-                if (!el) {
-                    // Field is read-only (no input) — update td.category by matching default label text
-                    if (labels[name] && defaultLabels[name]) {
-                        var defaultText = defaultLabels[name];
-                        var tds = document.querySelectorAll('td.category');
-                        for (var i = 0; i < tds.length; i++) {
-                            if (tds[i].children.length === 0 && tds[i].textContent.trim() === defaultText) {
-                                tds[i].textContent = labels[name];
-                                break;
-                            }
-                        }
-                    }
-                    return;
-                }
-
-                // Resolve label element first — needed for both label update and hint placement
-                var labelEl = document.querySelector('label[for="' + el.id + '"]');
-                if (!labelEl && altName) {
-                    labelEl = document.querySelector('label[for="' + altName + '"]');
-                }
-
-                if (placeholders[name]) {
-                    el.placeholder = placeholders[name];
-                }
-
-                if (descriptions[name]) {
-                    // Insert hint below the field label (in the label cell), fallback to after the input
-                    var hintParent = labelEl ? labelEl.parentNode : el.parentNode;
-                    var hintAfter  = labelEl ? labelEl.nextSibling  : el.nextSibling;
-                    if (!hintParent.querySelector('.fd-hint')) {
-                        var hint = document.createElement('p');
-                        hint.className = 'fd-hint';
-                        hint.style.cssText = 'color:#777;font-size:11px;margin:3px 0 0;line-height:1.4;';
-                        hint.textContent = descriptions[name];
-                        hintParent.insertBefore(hint, hintAfter);
-                    }
-                }
-
-                if (labels[name] && labelEl) {
-                    labelEl.textContent = labels[name];
-                }
-
-            } else if (isListPage) {
-                // Issue list page: th.column-* headers contain a sort <a> link
-                if (!labels[name]) return;
-                var sel = listSelectors[name];
-                if (!sel) return;
-                document.querySelectorAll(sel).forEach(function(thEl) {
-                    var link = thEl.querySelector('a');
-                    if (link) {
-                        // Update only the text node, preserve the sort icon inside <a>
-                        for (var i = 0; i < link.childNodes.length; i++) {
-                            if (link.childNodes[i].nodeType === 3) {
-                                link.childNodes[i].textContent = labels[name];
-                                break;
-                            }
-                        }
-                    } else {
-                        thEl.textContent = labels[name];
-                    }
-                });
-            } else {
-                // View pages: use CSS class selector on <th>
-                if (!labels[name]) return;
-                var sel = viewSelectors[name];
-                if (!sel) return;
-                document.querySelectorAll(sel).forEach(function(el) {
-                    el.textContent = labels[name];
-                });
-            }
-        });
-    }
-
-    function applyCustomFields() {
-        customFields.forEach(function(cf) {
-            if (!cf.label && !cf.desc && !cf.ph) return;
-
-            if (isFormPage) {
-                var el = document.querySelector('[name="custom_field_' + cf.id + '"], [name="custom_field_' + cf.id + '[]"]');
-                if (!el) return;
-                var labelEl = document.querySelector('label[for="custom_field_' + cf.id + '"]');
-
-                if (cf.ph) el.placeholder = cf.ph;
-
-                if (cf.desc) {
-                    var hintParent = labelEl ? labelEl.parentNode : el.parentNode;
-                    var hintAfter  = labelEl ? labelEl.nextSibling  : el.nextSibling;
-                    if (!hintParent.querySelector('.fd-hint')) {
-                        var hint = document.createElement('p');
-                        hint.className = 'fd-hint';
-                        hint.style.cssText = 'color:#777;font-size:11px;margin:3px 0 0;line-height:1.4;';
-                        hint.textContent = cf.desc;
-                        hintParent.insertBefore(hint, hintAfter);
-                    }
-                }
-
-                if (cf.label && labelEl) labelEl.textContent = cf.label;
-
-            } else if (isListPage) {
-                if (!cf.label) return;
-                var sel = 'th.column-custom-' + cf.cssName;
-                document.querySelectorAll(sel).forEach(function(thEl) {
-                    var link = thEl.querySelector('a');
-                    if (link) {
-                        for (var i = 0; i < link.childNodes.length; i++) {
-                            if (link.childNodes[i].nodeType === 3) {
-                                link.childNodes[i].textContent = cf.label;
-                                break;
-                            }
-                        }
-                    } else {
-                        thEl.textContent = cf.label;
-                    }
-                });
-
-            } else {
-                // View page: all custom field labels use th.bug-custom-field.category — match by text
-                if (!cf.label) return;
-                document.querySelectorAll('th.bug-custom-field.category').forEach(function(th) {
-                    if (th.textContent.trim() === cf.name) th.textContent = cf.label;
-                });
-            }
-        });
-    }
-
-    function run() {
-        applyEnhancements();
-        applyCustomFields();
-    }
-
-    if (document.readyState === 'complete') {
-        run();
-    } else {
-        window.addEventListener('load', run);
-    }
-})();
-</script>
-HTML;
+        $config_json = json_encode( array(
+            'isFormPage'    => $is_form,
+            'isListPage'    => $is_list,
+            'viewSelectors' => self::VIEW_SELECTORS,
+            'listSelectors' => self::LIST_SELECTORS,
+            'defaultLabels' => self::FIELDS,
+            'customFields'  => array_values( $custom_fields_data ),
+            'global'        => array( 'labels' => $global_labels, 'descriptions' => $global_descs, 'placeholders' => $global_phs ),
+            'project'       => array( 'labels' => $proj_labels,   'descriptions' => $proj_descs,   'placeholders' => $proj_phs ),
+        ), $flags );
+        $js_url = plugin_file( 'field-descriptions.js', false );
+        echo '<script type="application/json" id="fd-config">' . $config_json . '</script>' . "\n";
+        echo '<script src="' . htmlspecialchars( $js_url ) . '"></script>' . "\n";
         } catch ( Throwable $e ) {
             $msg = htmlspecialchars( $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() );
             echo '<!-- FieldDescriptions plugin error: ' . $msg . ' -->';
