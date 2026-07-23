@@ -31,7 +31,7 @@
         body.setAttribute('data-fd-ph', text);
         editor.dom.addStyle(
             'body[data-fd-ph]::before{content:attr(data-fd-ph);color:#aaa;display:block;' +
-            'position:absolute;pointer-events:none;font-style:italic;}' +
+            'position:absolute;pointer-events:none;}' +
             'body[data-fd-ph-active]::before{display:none;}'
         );
         function update() {
@@ -137,6 +137,12 @@
         });
     }
 
+    function findRowTh(el) {
+        var row = el;
+        while (row && row.tagName !== 'TR') row = row.parentNode;
+        return row ? row.querySelector('th') : null;
+    }
+
     function applyCustomFields() {
         customFields.forEach(function(cf) {
             if (!cf.label && !cf.desc && !cf.ph) return;
@@ -150,8 +156,9 @@
                     if (el.id) setMcePlaceholder(el.id, cf.ph);
                 }
                 if (cf.desc) {
-                    var hintParent = labelEl ? labelEl.parentNode : el.parentNode;
-                    var hintAfter  = labelEl ? labelEl.nextSibling  : el.nextSibling;
+                    var thEl = labelEl ? labelEl.parentNode : findRowTh(el);
+                    var hintParent = thEl || el.parentNode;
+                    var hintAfter  = thEl ? null : el.nextSibling;
                     if (!hintParent.querySelector('.fd-hint')) {
                         var hint = document.createElement('p');
                         hint.className = 'fd-hint';
