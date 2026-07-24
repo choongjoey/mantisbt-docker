@@ -5,13 +5,15 @@
     var cfg;
     try { cfg = JSON.parse(el.textContent); } catch(e) { return; }
 
-    var isFormPage      = cfg.isFormPage;
-    var isListPage      = cfg.isListPage;
-    var viewSelectors   = cfg.viewSelectors;
-    var listSelectors   = cfg.listSelectors;
-    var filterSelectors = cfg.filterSelectors || {};
-    var defaultLabels   = cfg.defaultLabels;
-    var customFields    = cfg.customFields;
+    var isFormPage          = cfg.isFormPage;
+    var isListPage          = cfg.isListPage;
+    var isSummaryPage       = cfg.isSummaryPage;
+    var summaryReplacements = cfg.summaryReplacements || [];
+    var viewSelectors       = cfg.viewSelectors;
+    var listSelectors       = cfg.listSelectors;
+    var filterSelectors     = cfg.filterSelectors || {};
+    var defaultLabels       = cfg.defaultLabels;
+    var customFields        = cfg.customFields;
 
     function merge(base, override) {
         var result = {};
@@ -198,6 +200,16 @@
         });
     }
 
-    function run() { applyEnhancements(); applyCustomFields(); }
+    function applySummaryHeadings() {
+        if (!summaryReplacements.length) return;
+        document.querySelectorAll('th').forEach(function(th) {
+            var text = th.textContent.trim();
+            summaryReplacements.forEach(function(r) {
+                if (text === r.find) th.textContent = r.replace;
+            });
+        });
+    }
+
+    function run() { applyEnhancements(); applyCustomFields(); if (isSummaryPage) applySummaryHeadings(); }
     if (document.readyState === 'complete') { run(); } else { window.addEventListener('load', run); }
 })();

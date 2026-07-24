@@ -22,6 +22,33 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         'attach_tags'        => 'Attach Tags',
     );
 
+    // Maps field name → summary page heading replacements {old_lang, new_format}
+    const SUMMARY_HEADING_MAP = array(
+        'category_id' => array(
+            array( 'old_lang' => 'by_category',            'new_format' => 'By {label}' ),
+        ),
+        'status'      => array(
+            array( 'old_lang' => 'by_status',              'new_format' => 'By {label}' ),
+        ),
+        'severity'    => array(
+            array( 'old_lang' => 'by_severity',            'new_format' => 'By {label}' ),
+        ),
+        'resolution'  => array(
+            array( 'old_lang' => 'by_resolution',          'new_format' => 'By {label}' ),
+        ),
+        'priority'    => array(
+            array( 'old_lang' => 'by_priority',            'new_format' => 'By {label}' ),
+        ),
+        'project_id'  => array(
+            array( 'old_lang' => 'by_project',             'new_format' => 'By {label}' ),
+        ),
+        'reporter_id' => array(
+            array( 'old_lang' => 'by_reporter',            'new_format' => 'By {label}' ),
+            array( 'old_lang' => 'reporter_stats',         'new_format' => '{label} Stats' ),
+            array( 'old_lang' => 'reporter_by_resolution', 'new_format' => '{label} By Resolution' ),
+        ),
+    );
+
     // Maps field name → filter label element ID on issue list page
     const FILTER_SELECTORS = array(
         'category_id'        => '#show_category_filter',
@@ -139,13 +166,15 @@ class FieldDescriptionsPlugin extends MantisPlugin {
     function inject_scripts( $p_event ) {
         try {
         $page = basename( $_SERVER['SCRIPT_NAME'] );
-        $form_pages = array( 'bug_report_page.php', 'bug_update_page.php', 'bug_change_status_page.php' );
-        $view_pages = array( 'view.php', 'bug_view_page.php', 'bug_view_advanced_page.php' );
-        $list_pages = array( 'view_all_bug_page.php' );
-        $is_form = in_array( $page, $form_pages );
-        $is_view = in_array( $page, $view_pages );
-        $is_list = in_array( $page, $list_pages );
-        if ( !$is_form && !$is_view && !$is_list ) {
+        $form_pages    = array( 'bug_report_page.php', 'bug_update_page.php', 'bug_change_status_page.php' );
+        $view_pages    = array( 'view.php', 'bug_view_page.php', 'bug_view_advanced_page.php' );
+        $list_pages    = array( 'view_all_bug_page.php' );
+        $summary_pages = array( 'summary_page.php' );
+        $is_form    = in_array( $page, $form_pages );
+        $is_view    = in_array( $page, $view_pages );
+        $is_list    = in_array( $page, $list_pages );
+        $is_summary = in_array( $page, $summary_pages );
+        if ( !$is_form && !$is_view && !$is_list && !$is_summary ) {
             return;
         }
 
@@ -214,14 +243,30 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         $default_labels_json  = json_encode( self::FIELDS );
         $custom_fields_json   = json_encode( array_values( $custom_fields_data ), $flags );
 
+        $merged_labels = array_merge( $global_labels, $proj_labels );
+        $summary_replacements = array();
+        if ( $is_summary ) {
+            foreach ( self::SUMMARY_HEADING_MAP as $field => $entries ) {
+                if ( !isset( $merged_labels[ $field ] ) ) continue;
+                $new_label = $merged_labels[ $field ];
+                foreach ( $entries as $entry ) {
+                    $old = lang_get( $entry['old_lang'] );
+                    $new = str_replace( '{label}', $new_label, $entry['new_format'] );
+                    $summary_replacements[] = array( 'find' => $old, 'replace' => $new );
+                }
+            }
+        }
+
         $config_json = json_encode( array(
-            'isFormPage'      => $is_form,
-            'isListPage'      => $is_list,
-            'viewSelectors'   => self::VIEW_SELECTORS,
-            'listSelectors'   => self::LIST_SELECTORS,
-            'filterSelectors' => self::FILTER_SELECTORS,
-            'defaultLabels'   => self::FIELDS,
-            'customFields'  => array_values( $custom_fields_data ),
+            'isFormPage'          => $is_form,
+            'isListPage'          => $is_list,
+            'isSummaryPage'       => $is_summary,
+            'summaryReplacements' => $summary_replacements,
+            'viewSelectors'       => self::VIEW_SELECTORS,
+            'listSelectors'       => self::LIST_SELECTORS,
+            'filterSelectors'     => self::FILTER_SELECTORS,
+            'defaultLabels'       => self::FIELDS,
+            'customFields'        => array_values( $custom_fields_data ),
             'global'        => array( 'labels' => $global_labels, 'descriptions' => $global_descs, 'placeholders' => $global_phs ),
             'project'       => array( 'labels' => $proj_labels,   'descriptions' => $proj_descs,   'placeholders' => $proj_phs ),
         ), $flags );
