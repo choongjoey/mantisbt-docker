@@ -22,6 +22,23 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         'attach_tags'        => 'Attach Tags',
     );
 
+    // Maps field name → filter label element ID on issue list page
+    const FILTER_SELECTORS = array(
+        'category_id'        => '#show_category_filter',
+        'reproducibility'    => '#show_reproducibility_filter',
+        'severity'           => '#show_severity_filter',
+        'priority'           => '#show_priority_filter',
+        'project_id'         => '#project_id_filter',
+        'view_state'         => '#view_state_filter',
+        'date_submitted'     => '#do_filter_by_date_filter',
+        'last_updated'       => '#do_filter_by_last_updated_date_filter',
+        'reporter_id'        => '#reporter_id_filter',
+        'handler_id'         => '#handler_id_filter',
+        'status'             => '#show_status_filter',
+        'resolution'         => '#show_resolution_filter',
+        'tags'               => '#tag_string_filter',
+    );
+
     // Maps field name → <th class="column-*"> CSS class on issue list page
     const LIST_SELECTORS = array(
         'summary'            => 'th.column-summary',
@@ -198,11 +215,12 @@ class FieldDescriptionsPlugin extends MantisPlugin {
         $custom_fields_json   = json_encode( array_values( $custom_fields_data ), $flags );
 
         $config_json = json_encode( array(
-            'isFormPage'    => $is_form,
-            'isListPage'    => $is_list,
-            'viewSelectors' => self::VIEW_SELECTORS,
-            'listSelectors' => self::LIST_SELECTORS,
-            'defaultLabels' => self::FIELDS,
+            'isFormPage'      => $is_form,
+            'isListPage'      => $is_list,
+            'viewSelectors'   => self::VIEW_SELECTORS,
+            'listSelectors'   => self::LIST_SELECTORS,
+            'filterSelectors' => self::FILTER_SELECTORS,
+            'defaultLabels'   => self::FIELDS,
             'customFields'  => array_values( $custom_fields_data ),
             'global'        => array( 'labels' => $global_labels, 'descriptions' => $global_descs, 'placeholders' => $global_phs ),
             'project'       => array( 'labels' => $proj_labels,   'descriptions' => $proj_descs,   'placeholders' => $proj_phs ),

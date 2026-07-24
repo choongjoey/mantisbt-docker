@@ -5,12 +5,13 @@
     var cfg;
     try { cfg = JSON.parse(el.textContent); } catch(e) { return; }
 
-    var isFormPage    = cfg.isFormPage;
-    var isListPage    = cfg.isListPage;
-    var viewSelectors = cfg.viewSelectors;
-    var listSelectors = cfg.listSelectors;
-    var defaultLabels = cfg.defaultLabels;
-    var customFields  = cfg.customFields;
+    var isFormPage      = cfg.isFormPage;
+    var isListPage      = cfg.isListPage;
+    var viewSelectors   = cfg.viewSelectors;
+    var listSelectors   = cfg.listSelectors;
+    var filterSelectors = cfg.filterSelectors || {};
+    var defaultLabels   = cfg.defaultLabels;
+    var customFields    = cfg.customFields;
 
     function merge(base, override) {
         var result = {};
@@ -112,20 +113,26 @@
             } else if (isListPage) {
                 if (!labels[name]) return;
                 var sel = listSelectors[name];
-                if (!sel) return;
-                document.querySelectorAll(sel).forEach(function(thEl) {
-                    var link = thEl.querySelector('a');
-                    if (link) {
-                        for (var i = 0; i < link.childNodes.length; i++) {
-                            if (link.childNodes[i].nodeType === 3) {
-                                link.childNodes[i].textContent = labels[name];
-                                break;
+                if (sel) {
+                    document.querySelectorAll(sel).forEach(function(thEl) {
+                        var link = thEl.querySelector('a');
+                        if (link) {
+                            for (var i = 0; i < link.childNodes.length; i++) {
+                                if (link.childNodes[i].nodeType === 3) {
+                                    link.childNodes[i].textContent = labels[name];
+                                    break;
+                                }
                             }
+                        } else {
+                            thEl.textContent = labels[name];
                         }
-                    } else {
-                        thEl.textContent = labels[name];
-                    }
-                });
+                    });
+                }
+                var filterSel = filterSelectors[name];
+                if (filterSel) {
+                    var filterEl = document.querySelector(filterSel);
+                    if (filterEl) filterEl.textContent = labels[name];
+                }
             } else {
                 if (!labels[name]) return;
                 var sel = viewSelectors[name];
@@ -180,6 +187,8 @@
                         }
                     } else { thEl.textContent = cf.label; }
                 });
+                var cfFilterEl = document.querySelector('#custom_field_' + cf.id + '_filter');
+                if (cfFilterEl) cfFilterEl.textContent = cf.label;
             } else {
                 if (!cf.label) return;
                 document.querySelectorAll('th.bug-custom-field.category').forEach(function(th) {
