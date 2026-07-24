@@ -146,10 +146,11 @@
         });
     }
 
-    function findRowTh(el) {
+    function findRowLabelCell(el) {
         var row = el;
         while (row && row.tagName !== 'TR') row = row.parentNode;
-        return row ? row.querySelector('th') : null;
+        if (!row) return null;
+        return row.querySelector('th') || row.querySelector('td.category');
     }
 
     function applyCustomFields() {
@@ -165,7 +166,7 @@
                     if (el.id) setMcePlaceholder(el.id, cf.ph);
                 }
                 if (cf.desc) {
-                    var thEl = labelEl ? labelEl.parentNode : findRowTh(el);
+                    var thEl = labelEl ? labelEl.parentNode : findRowLabelCell(el);
                     var hintParent = thEl || el.parentNode;
                     var hintAfter  = thEl ? null : el.nextSibling;
                     if (!hintParent.querySelector('.fd-hint')) {
